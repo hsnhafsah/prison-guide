@@ -74,7 +74,7 @@ const COPY = {
       "To apply for electrical monitoring, submit a request to the contact person upon expiration of the electrical monitoring period",
     ],
     eligibilityTitle: "When conditional early release is possible",
-    tableHeaders: ["Sentence", "ETEV Eligible After"],
+    tableHeaders: ["Sentence", "ETEV is Eligible After"],
     tableRows: [
       ["All sentences <= 5 years", "After serving 1/3 of your sentence (at least 4 months)"],
       ["All sentences > 5 years", "After serving 1/2 of your sentence (at least 4 months)"],
