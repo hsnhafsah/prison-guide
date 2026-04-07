@@ -2,12 +2,30 @@ import { useState, useEffect } from "react";
 import { useT } from "../../context/ThemeContext";
 import NAV from "../../constants/navigation";
 
-export default function Sidebar({ active, onNav, collapsed, onToggle, isDark, toggleTheme, isTablet, drawerOpen }) {
+const LANG_OPTIONS = [
+  { code:"et", label:"EST", locale:"et-EE" },
+  { code:"ru", label:"RU", locale:"ru-RU" },
+  { code:"en", label:"ENG", locale:"en-GB" },
+];
+
+export default function Sidebar({
+  active,
+  onNav,
+  collapsed,
+  onToggle,
+  isDark,
+  toggleTheme,
+  language = "en",
+  onLanguageChange,
+  isTablet,
+  drawerOpen,
+}) {
   const t = useT();
   const [expanded, setExpanded] = useState({});
   const [now, setNow] = useState(new Date());
   const mainId = active.split(".")[0];
   const toggle = (id) => setExpanded(p => ({ ...p, [id]: !p[id] }));
+  const locale = LANG_OPTIONS.find(option => option.code === language)?.locale || "en-GB";
 
   useEffect(() => {
     const m = active.split(".")[0];
@@ -19,8 +37,8 @@ export default function Sidebar({ active, onNav, collapsed, onToggle, isDark, to
     return () => clearInterval(timer);
   }, []);
 
-  const dateStr = now.toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
-  const timeStr = now.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+  const dateStr = now.toLocaleDateString(locale, { weekday:"short", day:"numeric", month:"short", year:"numeric" });
+  const timeStr = now.toLocaleTimeString(locale, { hour:"2-digit", minute:"2-digit", second:"2-digit" });
 
   const navStyle = isTablet
     ? {
@@ -60,6 +78,34 @@ export default function Sidebar({ active, onNav, collapsed, onToggle, isDark, to
         <div style={{ padding:"12px 18px", borderBottom:`1px solid ${t.border}`, background:t.accentDim }}>
           <div style={{ fontSize:22, fontWeight:800, color:t.accent, letterSpacing:1, fontFamily:"monospace" }}>{timeStr}</div>
           <div style={{ fontSize:12, color:t.dim, marginTop:2 }}>{dateStr}</div>
+          <div style={{ display:"flex", gap:6, marginTop:12 }}>
+            {LANG_OPTIONS.map(option => {
+              const isActive = language === option.code;
+              return (
+                <button
+                  key={option.code}
+                  onClick={() => onLanguageChange?.(option.code)}
+                  style={{
+                    flex:1,
+                    minHeight:36,
+                    padding:"8px 10px",
+                    background: isActive ? t.accent : t.card,
+                    color: isActive ? t.accentText : t.dim,
+                    border:`1px solid ${isActive ? t.accent : t.border}`,
+                    borderRadius:8,
+                    cursor:"pointer",
+                    fontSize:12,
+                    fontWeight:800,
+                    letterSpacing:0.6,
+                    fontFamily:"inherit",
+                    transition:"all 0.15s",
+                  }}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
