@@ -26,5 +26,104 @@ const KW = {
   "TEV":"Conditional early release on probation — serving remaining sentence in freedom under supervision.",
   "VEK":"Vangla Ettevõtluskeskus (Prison Entrepreneurship Center) — professional/industrial work in prison.",
 };
+const glossary = {
+  "kambri terminal": "Kambri juures asuv seade raadioside ja valvuriruumiga suhtlemiseks.",
+  "kaplan": "Vangla vaimulik, kes pakub vaimset tuge sõltumata usutunnistusest.",
+  "suletud kamber": "Kamber on lukustatud 23 tundi päevas. Liikumine on lubatud ainult saatja juuresolekul.",
+  "kontaktisik": "Teie peamine tugi (inspektor-kontaktisik või juhtumikorraldaja). Küsige enamiku küsimuste puhul esmalt neilt.",
+  "loendus": "Igapäevane nimekirja lugemine — ametnik kontrollib, kas oled kohal ja kas kõik on korras.",
+  "distsiplinaarmenetlus": "Ametlik protsess reeglite rikkumise korral — kogutakse tõendeid, määratakse karistus.",
+  "majandustööd": "Põhitööd (koristamine, toidu jagamine) — tavaliselt sinu esimene ülesanne.",
+  "e-pood": "Vangla veebipood toidu, hügieenitarvete, riiete ja elektroonika ostmiseks isikliku konto kaudu.",
+  "ETEV": "Elektrooniline järelevalve — ennetähtaegne vabastamine koos asukoha jälgimiseks mõeldud pahkluu-jälgimisseadmega.",
+  "perearst": "Teile vanglas määratud perearst. Külastab teid vähemalt kord nädalas.",
+  "IIP": "Individuaalne rakenduskava — sama mis ITK, teie tegevuskava õppimiseks, töötamiseks ja programmide läbimiseks.",
+  "ITK": "Individuaalne täitmiskava — teie isiklik tegevuskava, milles on kirjas tegevused ja eesmärgid ühiskonda taasintegreerumiseks.",
+  "nimesilt": "Kaelarihmaga kaelas kantav ID-kaart, kui oled väljaspool kambrit.",
+  "avatud osakond": "Kambri uksed on päeval avatud, vaba liikumine osakonna piires.",
+  "avatud vangla": "Madalama turvalisusega asutus. Vaba liikumine päeval, võib töötada või õppida väljaspool.",
+  "isiklik konto": "Vanglas teie jaoks avatud pangakonto. Kõik tehingud toimuvad selle kaudu — sularaha kasutamine ei ole lubatud.",
+  "telefonikaart": "Kaart vanglakõnede tegemiseks. Raha saab kanda üle isiklikult kontolt. Isiklikud telefonid on keelatud.",
+  "kriminaalhooldaja": "Ametnik, kes teid ennetähtaegse vabastamise järel jälgib, sarnaselt vanglas olevale kontaktisikule.",
+  "taasintegreerimine": "Toetus ja tegevused, mis aitavad pärast vabanemist elada seaduskuulekalt.",
+  "vabanemisfond": "Teie isiklikult kontolt säästetud summa, mis antakse vabanemisel. Maksimaalselt 3× Eesti miinimumpalk.",
+  "riskihindamine": "Hinnang sellele, kui tõenäoline on korduskuritegu, lähtudes teie minevikust ja asjaoludest.",
+  "lühiajalised väljasõidud": "Väljasõidud, mis kestavad kuni 21 kalendripäeva aastas.",
+  "sotsiaalprogrammid": "Struktureeritud programmid (viha, sõltuvus, vägivald) — osa sinu ITK-st.",
+  "üksikvangistus": "Distsiplinaarkaristus: üksi kambris, piiratud õigused. Maksimaalselt 14 päeva (3 päeva, kui oled alla 21-aastane).",
+  "TEV": "Tingimisi ennetähtaegne vabastamine katseajaga — järelejäänud karistuse kandmine vabaduses järelevalve all.",
+  "VEK": "Vangla Ettevõtluskeskus — kutse- ja tööstustöö vanglas."
+};
+
+const ET_LABELS = {
+  "cell terminal": "kambri terminal",
+  "chaplain": "kaplan",
+  "closed cell": "suletud kamber",
+  "contact person": "kontaktisik",
+  "count": "loendus",
+  "disciplinary proceedings": "distsiplinaarmenetlus",
+  "economic work": "majandustÃ¶Ã¶d",
+  "e-shop": "e-pood",
+  "ETEV": "ETEV",
+  "family doctor": "perearst",
+  "IIP": "IIP",
+  "ITK": "ITK",
+  "name tag": "nimesilt",
+  "open department": "avatud osakond",
+  "open prison": "avatud vangla",
+  "personal account": "isiklik konto",
+  "phone card": "telefonikaart",
+  "probation officer": "kriminaalhooldaja",
+  "reintegration": "taasintegreerimine",
+  "release fund": "vabanemisfond",
+  "risk assessment": "riskihindamine",
+  "short-term outings": "lÃ¼hiajalised vÃ¤ljasÃµidud",
+  "social programs": "sotsiaalprogrammid",
+  "solitary confinement": "Ã¼ksikvangistus",
+  "TEV": "TEV",
+  "VEK": "VEK",
+};
+
+ET_LABELS["economic work"] = "majandustÃ¶Ã¶d";
+ET_LABELS["short-term outings"] = "lÃ¼hiajalised vÃ¤ljasÃµidud";
+ET_LABELS["solitary confinement"] = "Ã¼ksikvangistus";
+
+function normalizeWord(word) {
+  if (typeof word !== "string") return "";
+  return word.trim().toLowerCase();
+}
+
+const EN_INDEX = Object.keys(KW).reduce((acc, key) => {
+  acc[normalizeWord(key)] = key;
+  return acc;
+}, {});
+
+const ET_INDEX = Object.values(ET_LABELS).reduce((acc, label) => {
+  acc[normalizeWord(label)] = label;
+  return acc;
+}, {});
+
+export function getKeywordEntry(word, language = "en") {
+  const normalizedWord = normalizeWord(word);
+  const englishKey = EN_INDEX[normalizedWord] || null;
+
+  if (englishKey) {
+    const etLabel = ET_LABELS[englishKey] || englishKey;
+    return {
+      label: language === "et" ? etLabel : englishKey,
+      definition: language === "et" ? glossary[etLabel] || KW[englishKey] : KW[englishKey],
+    };
+  }
+
+  const estonianLabel = ET_INDEX[normalizedWord] || null;
+  if (estonianLabel && glossary[estonianLabel]) {
+    return {
+      label: estonianLabel,
+      definition: glossary[estonianLabel],
+    };
+  }
+
+  return null;
+}
 
 export default KW;
