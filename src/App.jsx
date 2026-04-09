@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Ctx } from "./context/ThemeContext";
+import { LanguageCtx } from "./context/LanguageContext";
 import { light, dark } from "./constants/theme";
 import Sidebar from "./components/layout/Sidebar";
 import Router from "./components/Router";
@@ -7,6 +8,11 @@ import Router from "./components/Router";
 export default function App() {
   const [page, setPage] = useState("home");
   const [isDark, setDark] = useState(false);
+  const [language, setLanguage] = useState(() => {
+    if (typeof window === "undefined") return "en";
+    const saved = window.localStorage.getItem("pg-language");
+    return saved || "en";
+  });
   const [collapsed, setCollapsed] = useState(false);
   const [isTablet, setIsTablet] = useState(() => window.innerWidth < 1024);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -23,6 +29,11 @@ export default function App() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  useEffect(() => {
+    window.localStorage.setItem("pg-language", language);
+    document.documentElement.lang = language;
+  }, [language]);
+
   const nav = (id) => {
     setPage(id);
     if (mainRef.current) mainRef.current.scrollTop = 0;
@@ -31,6 +42,7 @@ export default function App() {
 
   return (
     <Ctx.Provider value={t}>
+      <LanguageCtx.Provider value={{ language, setLanguage }}>
       <div style={{ display:"flex", height:"100vh", fontFamily:"'Nunito',-apple-system,sans-serif", background:t.bg, color:t.text }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
@@ -65,6 +77,8 @@ export default function App() {
           onToggle={isTablet ? () => setDrawerOpen(false) : () => setCollapsed(!collapsed)}
           isDark={isDark}
           toggleTheme={() => setDark(!isDark)}
+          language={language}
+          onLanguageChange={setLanguage}
           isTablet={isTablet}
           drawerOpen={drawerOpen}
         />
@@ -96,6 +110,7 @@ export default function App() {
           >☰</button>
         )}
       </div>
+      </LanguageCtx.Provider>
     </Ctx.Provider>
   );
 }

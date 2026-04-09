@@ -34,6 +34,7 @@ import RelTEV from "../pages/release/RelTEV";
 import PrepPage from "../pages/PrepPage";
 import StaffPage from "../pages/StaffPage";
 import JourneyPage from "../pages/JourneyPage";
+import ActReintegration from "../pages/activities/ActReintegration";
 
 const PAGES = {
   "arrival.search": ArrivalSearch,
@@ -61,6 +62,7 @@ const PAGES = {
   "health.meds": HealthMeds,
   "health.psych": HealthPsych,
   "health.chaplain": HealthChaplain,
+  "act.reintegration": ActReintegration,
   "act.risk": ActRisk,
   "act.programs": ActPrograms,
   "act.learn": ActLearn,
